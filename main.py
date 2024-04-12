@@ -87,6 +87,7 @@ with tab2:
     
 with tab3:
     if uploaded_file is not None:
+        dims, x_cols, y_col, weight=select_cols(df.columns)
         control_cols = st.multiselect(
                 'Select the Control Columns to use',
                 x_cols,
@@ -109,7 +110,23 @@ with tab3:
             # st.pyplot(plot1.get_figure())
 
 with tab4:
-    st.title("Collinearity Tests")
+    if uploaded_file is not None:
+        dims, x_cols, y_col, weight=select_cols(df.columns)
+        control_cols = st.multiselect(
+                'Select the Control Columns',
+                x_cols,
+               [i for i in x_cols if ('.hol' not in i.lower()) and ('.mkt' not in i.lower()) and ('.dummy' not in i.lower())])
+        const_cols = st.multiselect(
+                'Select the Constant Columns',
+                x_cols,
+               [i for i in x_cols if ('.hol' in i.lower()) or ('.mkt' in i.lower()) or ('.dummy' in i.lower())])
+        epochs = st.number_input('Insert the number of iterations',value=10000)
+        if st.button('Create Regressions'):
+
+            meta=smj.Meta_Reg(df,y_col,stochQ=epochs,weight_col=weight,control_cols=control_cols,const_cols=const_cols,streamlit=st)
+
+            if meta is not None:
+                meta.beta_reg(var,control_var=[])
 
    
 
