@@ -3,6 +3,14 @@ import pandas as pd
 from datetime import datetime
 import SMjournal as smj
 
+#change name of stats
+
+# smjournal dont show option
+# change beta
+# correlation thresh
+
+st.set_page_config(page_title="Stats",layout="wide",page_icon=None)
+
 def select_cols(cols):
   dims=["Geographies","Weeks"]
   weight=[i for i in cols if ".LEQHHwgt" in i][0]
@@ -10,11 +18,15 @@ def select_cols(cols):
   x_cols=[i for i in cols if i not in dims+[weight,y_col]]
   return dims, x_cols, y_col, weight
 
+
+
+st.title('Stats')
 tab1, tab2, tab3, tab4 = st.tabs(["Data", "Collinearity Tests", "Feature Selection", 'Meta Regression'])
 
 with tab1:
+   
     holder = st.empty()
-    uploaded_file = holder.file_uploader("Choose a CSV to upload")
+    uploaded_file = holder.file_uploader("Choose a CSV to upload, make sure to have Weeks, Geographies, the dependent variable and weight")
     if uploaded_file is not None:
         
         df = pd.read_csv(uploaded_file)
@@ -45,10 +57,20 @@ with tab1:
 
         
 with tab2:
+
     if uploaded_file is not None:
         dims, x_cols, y_col, weight=select_cols(df.columns)
-        clus, fig, plt=smj.collinearity_test(df[['Weeks']+x_cols])
-        print(clus)
+        selected = st.multiselect(
+                'Select the Columns to use',
+                x_cols,
+               x_cols)
+        filt = st.number_input('Insert a Correlation filter')
+        if st.button('Run'):
+
+            clus, fig, plt, corrplot=smj.collinearity_test(df[['Weeks']+selected],streamlit=st,filter=filt)
+            st.pyplot(corrplot)
+            st.plotly_chart(fig, use_container_width=True)
+            st.pyplot(plt)
 
     
 with tab3:
