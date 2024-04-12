@@ -33,7 +33,7 @@ _max_width_(90)
 
 
 
-st.title('Stats')
+st.title('Stats!')
 tab1, tab2, tab3, tab4 = st.tabs(["Data", "Collinearity Tests", "Feature Selection", 'Meta Regression'])
 
 with tab1:
