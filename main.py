@@ -135,6 +135,7 @@ with tab4:
        
         def change_show():
             st.session_state.meta = not st.session_state.meta
+            st.session_state.computed=False
         # Independent button, with attached callback function
         # already_computed=False
         # if st.session_state.meta:
@@ -143,9 +144,12 @@ with tab4:
         st.button('Create Regressions',on_click=change_show)
         
         if st.session_state.meta:
+            if 'computed' not in st.session_state:
+                st.session_state.computed = False
+            if not st.session_state.computed:
            
           
-            meta=smj.Meta_Reg(df[['Weeks',y_col,weight]+control_cols+const_cols],y_col,stochQ=epochs,weight_col=weight,control_cols=control_cols,const_cols=const_cols,streamlit=st)
+                st.session_state.computed=smj.Meta_Reg(df[['Weeks',y_col,weight]+control_cols+const_cols],y_col,stochQ=epochs,weight_col=weight,control_cols=control_cols,const_cols=const_cols,streamlit=st)
            
 
             
@@ -158,7 +162,7 @@ with tab4:
                 control_cols,
                     [])
         
-            fig0, fig1, fig2, fig3, meth0, meth1=meta.beta_reg(var,control_var=control_vars)
+            fig0, fig1, fig2, fig3, meth0, meth1=st.session_state.computed.beta_reg(var,control_var=control_vars)
 
             st.subheader('Betas Analysis')
             st.plotly_chart(fig0, use_container_width=True)
