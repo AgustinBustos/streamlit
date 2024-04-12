@@ -9,6 +9,7 @@ import plotly.express as px
 # smjournal dont show option
 # change beta
 # correlation thresh
+# contributions, and button rerenders
 
 st.set_page_config(page_title="Stats",page_icon=None)
 
@@ -121,12 +122,37 @@ with tab4:
                 x_cols,
                [i for i in x_cols if ('.hol' in i.lower()) or ('.mkt' in i.lower()) or ('.dummy' in i.lower())])
         epochs = st.number_input('Insert the number of iterations',value=10000)
-        if st.button('Create Regressions'):
 
-            meta=smj.Meta_Reg(df,y_col,stochQ=epochs,weight_col=weight,control_cols=control_cols,const_cols=const_cols,streamlit=st)
+        
+        
+        if 'show_recommendation' not in st.session_state:
+            st.session_state.show_recommendation = False
 
-            if meta is not None:
-                meta.beta_reg(var,control_var=[])
+        # Callback function to make sure the state changes with each button click
+        def change_show():
+            st.session_state.show_recommendation = not st.session_state.show_recommendation
+
+        # Independent button, with attached callback function
+        st.button('Create Regressions',on_click=change_show)
+        
+        if st.session_state.show_recommendation:
+
+            meta=smj.Meta_Reg(df[['Weeks',y_col,weight]+control_cols+const_cols],y_col,stochQ=epochs,weight_col=weight,control_cols=control_cols,const_cols=const_cols,streamlit=st)
+        
+            st.markdown('---')
+            var = st.selectbox(
+                'Select variable to analize',
+                tuple(control_cols+const_cols))
+            control_vars =st.multiselect(
+                'Select the Control Cols',
+                control_cols,
+                    [])
+        
+            fig0, fig1, fig2, fig3, meth=meta.beta_reg(var,control_var=control_vars)
+            st.plotly_chart(fig0, use_container_width=True)
+            st.plotly_chart(fig1, use_container_width=True)
+            st.plotly_chart(fig2, use_container_width=True)
+            st.plotly_chart(fig3, use_container_width=True)
 
    
 
