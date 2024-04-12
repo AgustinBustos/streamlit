@@ -125,20 +125,30 @@ with tab4:
 
         
         
-        if 'show_recommendation' not in st.session_state:
-            st.session_state.show_recommendation = False
+        if 'meta' not in st.session_state:
+            st.session_state.meta = False
+        if 'computed' not in st.session_state:
+            st.session_state.computed = False
+        
 
         # Callback function to make sure the state changes with each button click
+       
         def change_show():
-            st.session_state.show_recommendation = not st.session_state.show_recommendation
-
+            st.session_state.meta = not st.session_state.meta
         # Independent button, with attached callback function
+        # already_computed=False
+        # if st.session_state.meta:
+        #     already_computed=True
+
         st.button('Create Regressions',on_click=change_show)
         
-        if st.session_state.show_recommendation:
-
+        if st.session_state.meta:
+           
+          
             meta=smj.Meta_Reg(df[['Weeks',y_col,weight]+control_cols+const_cols],y_col,stochQ=epochs,weight_col=weight,control_cols=control_cols,const_cols=const_cols,streamlit=st)
-        
+           
+
+            
             st.markdown('---')
             var = st.selectbox(
                 'Select variable to analize',
@@ -148,11 +158,16 @@ with tab4:
                 control_cols,
                     [])
         
-            fig0, fig1, fig2, fig3, meth=meta.beta_reg(var,control_var=control_vars)
+            fig0, fig1, fig2, fig3, meth0, meth1=meta.beta_reg(var,control_var=control_vars)
+
+            st.subheader('Betas Analysis')
             st.plotly_chart(fig0, use_container_width=True)
             st.plotly_chart(fig1, use_container_width=True)
+            st.plotly_chart(px.bar(pd.DataFrame.from_dict(meth1,orient='index').reset_index(),x='index',y=0))
+            st.subheader('Contribution Analysis')
             st.plotly_chart(fig2, use_container_width=True)
             st.plotly_chart(fig3, use_container_width=True)
+            st.plotly_chart(px.bar(pd.DataFrame.from_dict(meth0,orient='index').reset_index(),x='index',y=0))
 
    
 
