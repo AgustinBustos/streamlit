@@ -9,7 +9,7 @@ import SMjournal as smj
 # change beta
 # correlation thresh
 
-st.set_page_config(page_title="Stats",layout="wide",page_icon=None)
+st.set_page_config(page_title="Stats",page_icon=None)
 
 def select_cols(cols):
   dims=["Geographies","Weeks"]
@@ -17,6 +17,17 @@ def select_cols(cols):
   y_col=[i for i in cols if ".LEQHHDEP" in i][0]
   x_cols=[i for i in cols if i not in dims+[weight,y_col]]
   return dims, x_cols, y_col, weight
+
+def _max_width_(prcnt_width:int = 75):
+    max_width_str = f"max-width: {prcnt_width}%;"
+    st.markdown(f""" 
+                <style> 
+                .reportview-container .main .block-container{{{max_width_str}}}
+                </style>    
+                """, 
+                unsafe_allow_html=True,
+    )
+_max_width_(90)
 
 
 
@@ -63,9 +74,9 @@ with tab2:
         selected = st.multiselect(
                 'Select the Columns to use',
                 x_cols,
-               x_cols)
+               [i for i in x_cols if ('.hol' not in i.lower()) and ('.mkt' not in i.lower()) and ('.dummy' not in i.lower())])
         filt = st.number_input('Insert a Correlation filter')
-        if st.button('Run'):
+        if st.button('Understand Collinearity'):
 
             clus, fig, plt, corrplot=smj.collinearity_test(df[['Weeks']+selected],streamlit=st,filter=filt)
             st.pyplot(corrplot)
@@ -74,7 +85,24 @@ with tab2:
 
     
 with tab3:
-    st.title("Collinearity Tests")
+    if uploaded_file is not None:
+        control_cols = st.multiselect(
+                'Select the Control Columns to use',
+                x_cols,
+               [i for i in x_cols if ('.hol' not in i.lower()) and ('.mkt' not in i.lower()) and ('.dummy' not in i.lower())])
+        const_cols = st.multiselect(
+                'Select the Constant Columns to use',
+                x_cols,
+               [i for i in x_cols if ('.hol' in i.lower()) or ('.mkt' in i.lower()) or ('.dummy' in i.lower())])
+        if st.button('Select Features'):
+            dims, x_cols, y_col, weight=select_cols(df.columns)
+            fig2, plot0, plot1=smj.importance_test(df[[i for i in df.columns if "Geographies" not in i]], y_col, weight_col=None, control_cols=control_cols, const_cols=const_cols)
+            st.plotly_chart(fig2, use_container_width=True)
+            st.subheader('Linear Selection')
+            st.pyplot(plot0.get_figure())
+            st.subheader('Non Linear Selection')
+            st.pyplot(plot1.get_figure())
+
 with tab4:
     st.title("Collinearity Tests")
 
