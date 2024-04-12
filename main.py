@@ -101,10 +101,11 @@ with tab3:
             st.plotly_chart(fig2, use_container_width=True)
             st.subheader('Linear Selection')
         
-            st.plotly_chart(px.bar(toploten0, x="imp", y="cols", orientation='h'), use_container_width=True)
+            st.plotly_chart(px.bar(toploten0.loc[toploten0['imp']!=0], x="imp", y="cols", orientation='h'), use_container_width=True)
             # st.pyplot(plot0.get_figure())
             st.subheader('Non Linear Selection')
-            st.plotly_chart(px.bar(toploten1, x="imp", y="cols", orientation='h'), use_container_width=True)
+            st.plotly_chart(px.bar(toploten1.loc[toploten1['imp']!=0], x="imp", y="cols", orientation='h'), use_container_width=True)
+            # st.write(toploten1)
             # st.pyplot(plot1.get_figure())
 
 with tab4:
