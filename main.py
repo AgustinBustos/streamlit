@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 import SMjournal as smj
+import plotly.express as px
 
 #change name of stats
 
@@ -96,12 +97,15 @@ with tab3:
                [i for i in x_cols if ('.hol' in i.lower()) or ('.mkt' in i.lower()) or ('.dummy' in i.lower())])
         if st.button('Select Features'):
             dims, x_cols, y_col, weight=select_cols(df.columns)
-            fig2, plot0, plot1=smj.importance_test(df[[i for i in df.columns if "Geographies" not in i]], y_col, weight_col=None, control_cols=control_cols, const_cols=const_cols)
+            fig2, plot0, plot1, toploten0, toploten1=smj.importance_test(df[[i for i in df.columns if "Geographies" not in i]], y_col, weight_col=None, control_cols=control_cols, const_cols=const_cols,streamlit=True)
             st.plotly_chart(fig2, use_container_width=True)
             st.subheader('Linear Selection')
-            st.pyplot(plot0.get_figure())
+        
+            st.plotly_chart(px.bar(toploten0, x="imp", y="cols", orientation='h'), use_container_width=True)
+            # st.pyplot(plot0.get_figure())
             st.subheader('Non Linear Selection')
-            st.pyplot(plot1.get_figure())
+            st.plotly_chart(px.bar(toploten1, x="imp", y="cols", orientation='h'), use_container_width=True)
+            # st.pyplot(plot1.get_figure())
 
 with tab4:
     st.title("Collinearity Tests")
