@@ -39,7 +39,7 @@ tab1, tab2, tab3, tab4 = st.tabs(["Data", "Collinearity Tests", "Feature Selecti
 with tab1:
    
     holder = st.empty()
-    uploaded_file = holder.file_uploader("Choose a CSV to upload, make sure to have Weeks, Geographies, the dependent variable and weight")
+    uploaded_file = holder.file_uploader("Choose a CSV to upload, make sure to have 'Weeks', 'Geographies', the Dependent variable and Weight variable.")
     if uploaded_file is not None:
         
         df = pd.read_csv(uploaded_file)
