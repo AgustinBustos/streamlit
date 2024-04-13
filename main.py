@@ -68,24 +68,7 @@ with tab1:
         st.write(df)
         holder.empty()
 
-        
-with tab3:
-
-    if uploaded_file is not None:
-        dims, x_cols, y_col, weight=select_cols(df.columns)
-        selected = st.multiselect(
-                'Select the Columns to use',
-                x_cols,
-               [i for i in x_cols if ('.hol' not in i.lower()) and ('.mkt' not in i.lower()) and ('.dummy' not in i.lower())])
-        filt = st.number_input('Insert a Correlation filter')
-        if st.button('Understand Collinearity'):
-
-            clus, fig, plt, corrplot=smj.collinearity_test(df[['Weeks']+selected],streamlit=st,filter=filt)
-            st.pyplot(corrplot)
-            st.plotly_chart(fig, use_container_width=True)
-            st.pyplot(plt)
-
-    
+   
 with tab2:
     if uploaded_file is not None:
         dims, x_cols, y_col, weight=select_cols(df.columns)
@@ -110,6 +93,25 @@ with tab2:
             # st.write(toploten1)
             # st.pyplot(plot1.get_figure())
 
+
+        
+with tab3:
+
+    if uploaded_file is not None:
+        dims, x_cols, y_col, weight=select_cols(df.columns)
+        selected = st.multiselect(
+                'Select the Columns to use',
+                x_cols,
+               [i for i in x_cols if ('.hol' not in i.lower()) and ('.mkt' not in i.lower()) and ('.dummy' not in i.lower())])
+        filt = st.number_input('Insert a Correlation filter')
+        if st.button('Understand Collinearity'):
+
+            clus, fig, plt, corrplot=smj.collinearity_test(df[['Weeks']+selected],streamlit=st,filter=filt)
+            st.pyplot(corrplot)
+            st.plotly_chart(fig, use_container_width=True)
+            st.pyplot(plt)
+
+ 
 with tab4:
     if uploaded_file is not None:
         dims, x_cols, y_col, weight=select_cols(df.columns)
