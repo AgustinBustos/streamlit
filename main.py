@@ -163,15 +163,21 @@ with tab4:
                     [])
         
             fig0, fig1, fig2, fig3, meth0, meth1=st.session_state.computed.beta_reg(var,control_var=control_vars)
+            meth1=pd.DataFrame.from_dict(meth1,orient='index').reset_index()
+         
+            meth1=meth1.loc[meth1['index']!=var]
+            meth0=pd.DataFrame.from_dict(meth0,orient='index').reset_index()
+            meth0=meth0.loc[meth0['index']!=var]
+
 
             st.subheader('Betas Analysis')
             st.plotly_chart(fig0, use_container_width=True)
             st.plotly_chart(fig1, use_container_width=True)
-            st.plotly_chart(px.bar(pd.DataFrame.from_dict(meth1,orient='index').reset_index(),x='index',y=0))
+            st.plotly_chart(px.bar(meth1,x='index',y=0))
             st.subheader('Contribution Analysis')
             st.plotly_chart(fig2, use_container_width=True)
             st.plotly_chart(fig3, use_container_width=True)
-            st.plotly_chart(px.bar(pd.DataFrame.from_dict(meth0,orient='index').reset_index(),x='index',y=0))
+            st.plotly_chart(px.bar(meth0,x='index',y=0))
 
    
 
