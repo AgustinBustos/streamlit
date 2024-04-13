@@ -69,7 +69,7 @@ with tab1:
         holder.empty()
 
         
-with tab2:
+with tab3:
 
     if uploaded_file is not None:
         dims, x_cols, y_col, weight=select_cols(df.columns)
@@ -86,7 +86,7 @@ with tab2:
             st.pyplot(plt)
 
     
-with tab3:
+with tab2:
     if uploaded_file is not None:
         dims, x_cols, y_col, weight=select_cols(df.columns)
         control_cols = st.multiselect(
